@@ -1,6 +1,12 @@
 package com.example.recipeapp
 
+import android.content.Context
+import android.graphics.Color
+import android.graphics.Paint
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 
@@ -27,17 +33,69 @@ class MainActivity : AppCompatActivity() {
             val selectedRecipe = spinner.selectedItem.toString()
             val recipeDetails = getRecipeDetails(selectedRecipe)
             val ingredients = recipeDetails.split("\n").drop(1) // Drop the title line
-            val checklistAdapter = ArrayAdapter(this, R.layout.checklist_item, ingredients)
+            val checklistAdapter = ColoredArrayAdapter(this, ingredients)
             listView.adapter = checklistAdapter
+        }
+
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                // Optional: Handle selection if needed
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // Optional: Handle no selection if needed
+            }
         }
     }
 
     private fun getRecipeDetails(recipe: String): String {
         return when (recipe) {
-            "Pasta" -> getString(R.string.pasta_recipe)
-            "Pizza" -> getString(R.string.pizza_recipe)
-            "Salad" -> getString(R.string.salad_recipe)
+            "Fusilli Pasta" -> getString(R.string.pasta_recipe)
+            "Mushroom Pizza" -> getString(R.string.pizza_recipe)
+            "Greek Salad" -> getString(R.string.salad_recipe)
             else -> getString(R.string.select_recipe_prompt)
+        }
+    }
+
+    inner class ColoredArrayAdapter(context: Context, private val ingredients: List<String>) :
+        ArrayAdapter<String>(context, R.layout.colored_item, ingredients) {
+
+        private val checkedStates = BooleanArray(ingredients.size)
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+            val view = convertView ?: LayoutInflater.from(context)
+                .inflate(R.layout.colored_item, parent, false)
+            val checkBox: CheckBox = view.findViewById(R.id.ingredientCheckBox)
+            checkBox.text = ingredients[position]
+
+            // Alternate background color
+            val color = if (position % 2 == 0) {
+                Color.parseColor("#C1C1FF") // light blue
+            } else {
+                Color.TRANSPARENT // no color
+            }
+            view.setBackgroundColor(color)
+
+            // Set the checkbox state and apply strikethrough if checked
+            checkBox.setOnCheckedChangeListener(null) // Remove any existing listener
+            checkBox.isChecked = checkedStates[position]
+            applyStrikethrough(checkBox, checkedStates[position])
+
+            // Set the new listener
+            checkBox.setOnCheckedChangeListener { _, isChecked ->
+                checkedStates[position] = isChecked
+                applyStrikethrough(checkBox, isChecked)
+            }
+
+            return view
+        }
+
+        private fun applyStrikethrough(checkBox: CheckBox, isChecked: Boolean) {
+            checkBox.paintFlags = if (isChecked) {
+                checkBox.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+            } else {
+                checkBox.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+            }
         }
     }
 }
