@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Recipe App</string>
+    <string name="show_recipe">Show Recipe</string>
+    <string name="select_recipe_prompt">Select a recipe to see the ingredients.</string>
+    <string name="pasta_recipe">Ingredients for Pasta:\n Fusilli Pasta\n Tomato Sauce\n Feta Cheese\n Fresh Herbs</string>
+    <string name="pizza_recipe">Ingredients for Pizza:\n Dough\n Tomato Sauce\n Cheese\n Olives\ Mushrooms\n Mozzarela</string>
+    <string name="salad_recipe">Ingredients for Salad:\n Lettuce\n Cherry Tomatoes\n Cucumbers\n Greek Salad Dressing</string>
+</resources>
